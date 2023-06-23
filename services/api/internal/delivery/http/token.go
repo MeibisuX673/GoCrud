@@ -9,8 +9,19 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var api_key = "12345"
 
+// GetJWToken
+//  @Summary		Get JWT
+//	@Description	Get JWT
+//	@Tags			token
+//	@Accept			json
+//	@Produce		json
+//  @Param body body auth.UserAuth true "body"
+//	@Success		200	{array}	    auth.JwtToken
+//	@Failure		400	{object}	errorResponse.Error
+//	@Failure		404	{object}	errorResponse.Error
+//	@Failure		500	{object}	errorResponse.Error
+//	@Router			/token [post]
 func (d *Delivery) GetToken(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Add("Content-type", "application/json")

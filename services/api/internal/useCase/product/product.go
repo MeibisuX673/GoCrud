@@ -1,13 +1,13 @@
 package product
 
 import (
-
+	
 	"encoding/json"
 	"fmt"
-
-	"github.com/MeibisuX673/GoCrud/pkg/queryParametrs"
+	"net/http"
 	jsonProduct "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/dto/product"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/product"
+	"github.com/MeibisuX673/GoCrud/services/api/internal/services/queryService"
 
 )
 
@@ -23,13 +23,12 @@ func (uc *UseCase) Create(product *product.Product) (*product.Product, error){
 	return newProduct, nil
 }
 
-func (uc *UseCase) GetCollection(queryParams *queryParametrs.QueryParams) ([]*product.Product, error){
+func (uc *UseCase) GetCollection(r *http.Request) ([]*product.Product, error){
 
-	products, err := uc.productRepository.GetCollectionProduct(queryParams)
+	queryParams := queryService.GetQueries(r)
 
-	if err != nil{
-		return nil, err
-	}
+	products, _ := uc.productRepository.GetCollectionProduct(queryParams)
+
 
 	return products, nil
 

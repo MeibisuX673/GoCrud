@@ -1,16 +1,16 @@
 package mysql
 
 import (
-
+	
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
-	"github.com/MeibisuX673/GoCrud/pkg/queryParametrs"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/product"
+	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/query"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/user"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/repository/mysql/question"
-	
+	"github.com/MeibisuX673/GoCrud/services/api/internal/services/queryService"
 )
 
 
@@ -47,10 +47,14 @@ func (r *Repository) CreateProduct(product *product.Product) (*product.Product, 
 
 }
 
-func (r *Repository) GetCollectionProduct(queryParams *queryParametrs.QueryParams) ([]*product.Product, error){
+func (r *Repository) GetCollectionProduct(queryParams *query.Queries) ([]*product.Product, error){
 	
-	pre := queryParams.Page * queryParams.Limit - queryParams.Limit
-	rows, err := r.db.Query("SELECT p.id, p.name, p.price, p.quantity, p.user_id, p.created_at, p.update_at FROM Product AS p JOIN User AS u ON p.user_id=u.id LIMIT ?, ?", pre, queryParams.Limit)
+
+	baseQuery := "SELECT id, name, price, quantity, user_id, created_at, update_at FROM Product"
+
+	resultQuery := queryService.ConfigurationDbQuery(baseQuery, queryParams)
+
+	rows, err := r.db.Query(resultQuery)
 
 	if err != nil{
 		return nil, err
@@ -113,7 +117,7 @@ func (r *Repository) GetByProductId(id int) (*product.Product, error){
 		&productQuestion.CreatedAt,
 		&productQuestion.UpdateAt, 
 	); err != nil{
-		fmt.Println(err.Error())
+		return nil, err
 	}
 
 	user := r.getUserProduct(productQuestion.UserId)

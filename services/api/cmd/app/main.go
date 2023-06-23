@@ -7,11 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 	"github.com/MeibisuX673/GoCrud/pkg/store/mysql"
-	repository "github.com/MeibisuX673/GoCrud/services/api/internal/repository/mysql"
-	useCaseUser "github.com/MeibisuX673/GoCrud/services/api/internal/useCase/user"
-	useCaseProduct "github.com/MeibisuX673/GoCrud/services/api/internal/useCase/product"
 	deliveryHttp "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http"
-
+	repository "github.com/MeibisuX673/GoCrud/services/api/internal/repository/mysql"
+	useCaseProduct "github.com/MeibisuX673/GoCrud/services/api/internal/useCase/product"
+	useCaseUser "github.com/MeibisuX673/GoCrud/services/api/internal/useCase/user"
 )
 
 func main(){

@@ -1,9 +1,12 @@
 package repositoryInterface
 
 import (
+
 	"github.com/MeibisuX673/GoCrud/pkg/queryParametrs"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/product"
+	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/query"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/user"
+	
 )
 
 type Storage interface {
@@ -27,7 +30,7 @@ type UserRepository interface{
 type ProductRepository interface{
 
 	CreateProduct(product *product.Product) (*product.Product, error)
-	GetCollectionProduct(queryParams *queryParametrs.QueryParams) ([]*product.Product, error)
+	GetCollectionProduct(queryParams *query.Queries) ([]*product.Product, error)
 	GetByProductId(id int) (*product.Product, error)
 	DeleteProduct(id int) error
 	UpdateProduct(id int, arguments map[string]string) (*product.Product, error)

@@ -1,12 +1,11 @@
 package http
 
 import (
-
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
-	"github.com/MeibisuX673/GoCrud/pkg/queryParametrs"
+	_ "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/docs"
 	jsonProduct "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/dto/product"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/errorResponse"
 	domainProduct "github.com/MeibisuX673/GoCrud/services/api/internal/domain/product"
@@ -15,6 +14,19 @@ import (
 
 )
 
+// ListProducts
+//  @Summary		Create Product
+//	@Description	Create Product
+// 	@Security ApiKeyAuth
+//	@Tags			products
+//	@Accept			json
+//	@Produce		json
+//  @Param 	body 	body jsonProduct.CreateProductJson true "body"
+//	@Success		200	{object}	    jsonProduct.ProductJsonResponse
+//	@Failure		400	{object}	errorResponse.Error
+//	@Failure		404	{object}	errorResponse.Error
+//	@Failure		500	{object}	errorResponse.Error
+//	@Router			/products [post]
 func (d *Delivery) CreateProduct(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Add("Content-type", "application/json")
@@ -22,6 +34,8 @@ func (d *Delivery) CreateProduct(w http.ResponseWriter, r *http.Request){
 	var requestJsonProduct jsonProduct.CreateProductJson
 
 	json.NewDecoder(r.Body).Decode(&requestJsonProduct)
+
+
 
 	validate := validator.New()
 	if err := validate.Struct(requestJsonProduct); err != nil{
@@ -86,22 +100,27 @@ func (d *Delivery) CreateProduct(w http.ResponseWriter, r *http.Request){
 
 }
 
+// ListProducts
+//  @Summary		Get Collection Products
+//	@Description	Get Collection Products
+// 	@Security ApiKeyAuth
+//	@Tags			products
+//	@Accept			json
+//	@Produce		json
+//  @Param filter[name][eq] query string false "name"
+//  @Param filter[name][includes] query string false "name"
+//  @Param order[name] query string false "DESC/ASC"
+//	@Success		200	{array}	    jsonProduct.ProductJsonResponse
+//	@Failure		400	{object}	errorResponse.Error
+//	@Failure		404	{object}	errorResponse.Error
+//	@Failure		500	{object}	errorResponse.Error
+//	@Router			/products [get]
 func (d *Delivery) GetCollectionProduct(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Add("Content-type", "application/json")
 
-	queryParams := queryParametrs.New()
+	products, err := d.ucProduct.GetCollection(r)
 
-	param := r.URL.Query()
-	page := param.Get("page")
-	
-	numberPage, err := strconv.Atoi(page)
-
-	if err == nil{
-		queryParams.Page = numberPage
-	}
-
-	products, err := d.ucProduct.GetCollection(queryParams)
 
 	if err != nil{
 
@@ -131,6 +150,19 @@ func (d *Delivery) GetCollectionProduct(w http.ResponseWriter, r *http.Request){
 
 }
 
+// Delete Product
+//  @Summary		Delete Product
+//	@Description	Delete Product
+// 	@Security ApiKeyAuth
+//	@Tags			products
+//	@Accept			json
+//	@Produce		json
+//  @Param id path int true "id"
+//	@Success		204
+//	@Failure		400	{object}	errorResponse.Error
+//	@Failure		404	{object}	errorResponse.Error
+//	@Failure		500	{object}	errorResponse.Error
+//	@Router			/products/{id} [delete]
 func (d *Delivery) DeleteProduct(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Add("Content-type", "application/json")
@@ -199,6 +231,20 @@ func (d *Delivery) DeleteProduct(w http.ResponseWriter, r *http.Request){
 
 }
 
+// UpdateProduct
+//  @Summary		Update Product
+//	@Description	Update Product
+// 	@Security ApiKeyAuth
+//	@Tags			products
+//	@Accept			json
+//	@Produce		json
+//  @Param 	id 	path int true "id"
+//  @Param 	body 	body jsonProduct.UpdateJsonProduct true "body"
+//	@Success		200	{object}	    jsonProduct.ProductJsonResponse
+//	@Failure		400	{object}	errorResponse.Error
+//	@Failure		404	{object}	errorResponse.Error
+//	@Failure		500	{object}	errorResponse.Error
+//	@Router			/products/{id} [put]
 func (d *Delivery) UpdateProduct(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Add("Content-type", "application/json")
@@ -289,6 +335,19 @@ func (d *Delivery) UpdateProduct(w http.ResponseWriter, r *http.Request){
 
 }
 
+// GetOneProduct
+//  @Summary		Get One Product
+// 	@Security ApiKeyAuth
+//	@Description	Get One Product
+//	@Tags			products
+//	@Accept			json
+//	@Produce		json
+//  @Param id path int true "id"
+//	@Success		200	{array}	    jsonProduct.ProductJsonResponse
+//	@Failure		400	{object}	errorResponse.Error
+//	@Failure		404	{object}	errorResponse.Error
+//	@Failure		500	{object}	errorResponse.Error
+//	@Router			/products/{id} [get]
 func (d *Delivery) GetByProductId(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Add("Content-type", "application/json")
@@ -316,7 +375,18 @@ func (d *Delivery) GetByProductId(w http.ResponseWriter, r *http.Request){
 	id, err := strconv.ParseInt(val, 10, 32)
 
 	if err != nil{
-		fmt.Println(err.Error())
+
+		er := errorResponse.Error{
+			Message: "Error",
+			StatusCode: http.StatusInternalServerError,
+			Desscription: err.Error(),
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+
+		json.NewEncoder(w).Encode(er)
+
+		return
 	}
 
 	product, err := d.ucProduct.GetById(int(id))

@@ -1,11 +1,13 @@
 package useCase
 
 import (
+	
+	"net/http"
 	"github.com/MeibisuX673/GoCrud/pkg/queryParametrs"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/dto/auth"
+	jsonProduct "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/dto/product"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/product"
 	"github.com/MeibisuX673/GoCrud/services/api/internal/domain/user"
-	jsonProduct "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/dto/product"
 )
 
 
@@ -23,7 +25,7 @@ type User interface{
 type Product interface{
 
 	Create(product *product.Product) (*product.Product, error)
-	GetCollection(queryParams *queryParametrs.QueryParams) ([]*product.Product, error)
+	GetCollection(r *http.Request) ([]*product.Product, error)
 	GetById(id int) (*product.Product, error)
 	Delete(id int) error
 	Update(id int, updateProduct jsonProduct.UpdateJsonProduct) (*product.Product, error)

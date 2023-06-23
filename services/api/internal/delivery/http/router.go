@@ -1,8 +1,12 @@
 package http
 
 import (
+
 	"github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/middleware"
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
+	_ "github.com/MeibisuX673/GoCrud/services/api/internal/delivery/http/docs"
+
 )
 
 
@@ -13,6 +17,7 @@ func (delivery *Delivery) initRouter() *mux.Router{
 
 	delivery.router = m
 
+	delivery.swagerRoutes()
 	delivery.userRoutes()
 	delivery.productRoutes()
 	delivery.tokenRoutes()
@@ -45,4 +50,10 @@ func (delivery *Delivery) tokenRoutes(){
 
 	delivery.router.HandleFunc("/token", delivery.GetToken).Methods("POST")
 	
+}
+
+func (delivery *Delivery) swagerRoutes(){
+
+    delivery.router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
+
 }
